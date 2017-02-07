@@ -2,7 +2,7 @@ import operator
 import math
 
 def is_ascii(s):
-    return all(ord(c) < 125 and ord(c) > 31 for c in s)
+    return all(ord(c) < 128 for c in s)
 
 
 def english_detect(open_text_dict):
@@ -15,12 +15,17 @@ def english_detect(open_text_dict):
 	inv_prob = {}
 	for key,text in open_text_dict.items():
 		text = text.upper()
-		deltas = [ text.count( chr(i) ) / float( len( text) )	for i in range( ord("A"), ord("Z") + 1 )]
+		deltas = [ text.count( chr(i) ) / float( len( text) - text.count(" "))	for i in range( ord("A"), ord("Z") + 1 )]
 		prob = 0
 		for i in range( len(arr) ):
 			prob += ( deltas[i] - arr[i] ) ** 2
 		inv_prob[key] = math.sqrt(prob)
+	if len(inv_prob) == 0:
+		return {}
 	min_key = min(inv_prob.iteritems(), key=operator.itemgetter(1))[0]	
+
+#	print(open_text_dict)	
+
 	return {min_key : open_text_dict[ min_key ] }
 		
 
@@ -31,21 +36,17 @@ def decrypt_by_one_char(in_str, char):
 		return ''.join([chr(int(i, 16) ^ char) for i in ar_bytes])
 	else:
 		return ""
-#date="191f1911160b0c580c101d581d0e1114583f1914191b0c111b583d1508110a1d56"		
-print("Enter hex string")
-while True:
-	date = raw_input()
+filename="detectSingleXor05"
 
-	try:
-		int(date, 16)
-		break
-	except ValueError:
-		print("Try again!")
+with open(filename) as f:
+	content = f.readlines()
+content = [x.strip() for x in content]
 
-res_dict={}
-for i in range(64,123):
-	res_dict[i] = decrypt_by_one_char(date,i)
+for cipher in content:
+	res_dict={}
+	for i in range(256):
+		res_dict[i] = decrypt_by_one_char(cipher,i)
 #print(res_dict)
-for key, text in english_detect(res_dict).items():
-	print(chr(key) + ":   " + text)
+	for key, text in english_detect(res_dict).items():
+		print(chr(key) + ":   " + text)
 	
