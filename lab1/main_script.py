@@ -1,13 +1,55 @@
 
+base64_alp = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+
 def XOR_buf(buf1, buf2):
 	res=int(buf1,16) ^ int(buf2,16)
 	return format(res, 'x')
 
 def hex_to_base64(hex_str):
-	return hex_str.decode("hex").encode("base64")
+	acsii_str = "".join( chr(int(hex_str[i:i+2],16)) for i in range(0, len(hex_str), 2))
+	encode_string = ""
+# left variable remembers that left shift required
+	left = 0
+	for i in range(len(acsii_str)):
+		if left == 0:
+# ascii symbol has got 8 bit but we need only 6 thus shift to the right 2 times
+			encode_string += base64_alp[ord(acsii_str[i]) >> 2]
+# 2 shift to the left is required next time
+			left = 2
+		else:
+			if left == 6:
+				encode_string += base64_alp[ord(acsii_str[i - 1]) & 63]
+				encode_string += base64_alp[ord	(acsii_str[i]) / 4 ]
+				left = 2
+			else:
+				index1 = ord(acsii_str[i - 1]) & (2 ** left - 1)
+				index2 = ord(acsii_str[i]) >> (left + 2)
+				index = (index1 << (6 - left)) | index2
+				encode_string += base64_alp[index]
+				left += 2
+	if left != 0:
+		encode_string += base64_alp[(ord(acsii_str[len(acsii_str) - 1]) & (2 ** left - 1)) << (6 - left)]
+	encode_string += "=" * ((4 - len(encode_string) % 4) % 4)
+	return encode_string
+#	return hex_str.decode("hex").encode("base64")
 
 def base64_to_hex(base64_str):
-	return base64_str.decode("base64").encode("hex")
+	decode_string = ""
+#	print(base64_str)
+	base64_str = base64_str.replace("=", "")
+	left = 0
+	for i in range(len(base64_str)):
+		if left == 0:
+			left = 6
+		else:
+			value1 = base64_alp.index(base64_str[i - 1]) & (2 ** left - 1)
+			value2 = base64_alp.index(base64_str[i]) >> (left - 2)
+			value = (value1 << (8 - left)) | value2
+			decode_string += chr(value)
+			left -= 2
+	return "".join([format(ord(char), "x") for char in decode_string])
+
+#	return base64_str.decode("base64").encode("hex")
 
 b64 =  hex_to_base64("faea8766efd8b295a633908a3c0828b22640e1e9122c3c9cfb7b59b7cf3c9d448bf04d72cde3aaa0")
 print(b64)
