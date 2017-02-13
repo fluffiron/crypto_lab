@@ -19,7 +19,10 @@ class my_AES():
 	cipher = None
 	def __init__(self):
 		key = Random.new().read(AES.block_size)
-		self.cipher = AES.new(key, AES.MODE_ECB)				
+		self.cipher = AES.new(key, AES.MODE_ECB)
+	
+	def crypt(self, str_r):
+		return self.cipher.encrypt(addition_PKCS7( str_r + unknownStrBase64.decode("base64") ))
 
 a=my_AES()
 
@@ -31,9 +34,28 @@ def brute_force():
 		if is_repeat_blocks(ciph):
 			block_size = l / 2
 			break
-	my_str = "A" * (block_size - 1)
-	
-	return block_size
+	blocks_n = len(a.crypt(""))/16
+	open_text = ""
+	cnt_blocks = 0
+	while cnt_blocks < blocks_n:
+		tmp_open_str = ""
+		for l in range(block_size - 1, -1, -1):
+			if cnt_blocks == 0 or l == 0:
+				my_str = "A" * l
+			else:
+				my_str = open_text[-16 + ( 16 - l ):]
+			ciph = a.crypt( "A" * l  )
+			for byte in range(256):
+				if len(my_str + tmp_open_str) + 1 != 16:
+					break
+				if a.cipher.encrypt(my_str + tmp_open_str + chr(byte)) == ciph[16 * cnt_blocks :block_size + 16 * cnt_blocks]:
+					tmp_open_str += chr(byte)
+					break
+		open_text += tmp_open_str
+		cnt_blocks += 1
+							
+		
+	return open_text
 		
 
 my_str = "dddddddddddddddd"
@@ -41,4 +63,4 @@ my_str = "dddddddddddddddd"
 print(brute_force())
 
 
-
+print unknownStrBase64.decode("base64")
