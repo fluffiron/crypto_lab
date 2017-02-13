@@ -18,8 +18,9 @@ def hex_to_base64(hex_str):
 			left = 2
 		else:
 			if left == 6:
+
 				encode_string += base64_alp[ord(acsii_str[i - 1]) & 63]
-				encode_string += base64_alp[ord	(acsii_str[i]) / 4 ]
+				encode_string += base64_alp[ord	(acsii_str[i]) >> 2 ]
 				left = 2
 			else:
 				index1 = ord(acsii_str[i - 1]) & (2 ** left - 1)
