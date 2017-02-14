@@ -47,6 +47,7 @@ def brute_force():
 			ciph = a.crypt( "A" * l  )
 			for byte in range(256):
 				if len(my_str + tmp_open_str) + 1 != 16:
+					tmp_open_str = tmp_open_str[:-1]
 					break
 				if a.cipher.encrypt(my_str + tmp_open_str + chr(byte)) == ciph[16 * cnt_blocks :block_size + 16 * cnt_blocks]:
 					tmp_open_str += chr(byte)
@@ -63,4 +64,4 @@ my_str = "dddddddddddddddd"
 print(brute_force())
 
 
-print unknownStrBase64.decode("base64")
+#print unknownStrBase64.decode("base64")
