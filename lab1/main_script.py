@@ -6,6 +6,12 @@ def XOR_buf(buf1, buf2):
 	return format(res, 'x')
 
 def hex_to_base64(hex_str):
+	if len(hex_str) % 2 == 1:
+		return "Bad format"
+	try:
+		int(hex_str, 16)
+	except:
+		return "Bad format"
 	acsii_str = "".join( chr(int(hex_str[i:i+2],16)) for i in range(0, len(hex_str), 2))
 	encode_string = ""
 # left variable remembers that left shift required
@@ -36,6 +42,8 @@ def hex_to_base64(hex_str):
 
 def base64_to_hex(base64_str):
 	decode_string = ""
+	if base64_str.count("=") != ( 4 - (len(base64_str) - base64_str.count("=")) % 4 ) % 4:
+		return "Bad format"
 #	print(base64_str)
 	base64_str = base64_str.replace("=", "")
 	left = 0
@@ -48,13 +56,14 @@ def base64_to_hex(base64_str):
 			value = (value1 << (8 - left)) | value2
 			decode_string += chr(value)
 			left -= 2
-	return "".join([format(ord(char), "x") for char in decode_string])
+	return "".join(["{:02x}".format(ord(char)) for char in decode_string])
 
 #	return base64_str.decode("base64").encode("hex")
 
-b64 =  hex_to_base64("faea8766efd8b295a633908a3c0828b22640e1e9122c3c9cfb7b59b7cf3c9d448bf04d72cde3aaa0")
+inp= raw_input()
+b64 =  hex_to_base64(inp)
 print(b64)
-print(base64_to_hex(b64))
+print(base64_to_hex(raw_input()))
 
 a="8f29336f5e9af0919634f474d248addaf89f6e1f533752f52de2dae0ec3185f818c0892fdc873a69"
 b="bf7962a3c4e6313b134229e31c0219767ff59b88584a303010ab83650a3b1763e5b314c2f1e2f166"

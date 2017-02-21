@@ -22,11 +22,16 @@ def english_detect(open_text_dict):
 		inv_prob[key] = math.sqrt(prob)
 	if len(inv_prob) == 0:
 		return {}
-	min_key = min(inv_prob.iteritems(), key=operator.itemgetter(1))[0]	
-
+	res_dict = {}
+	for i in range(3):
+		min_key = min(inv_prob.iteritems(), key=operator.itemgetter(1))[0]
+		res_dict[min_key] =  open_text_dict[ min_key ]
+		inv_prob.pop(min_key)
+	
 #	print(open_text_dict)	
 
-	return {min_key : open_text_dict[ min_key ] }
+	return res_dict
+#{min_key : open_text_dict[ min_key ] }
 		
 
 def decrypt_by_one_char(in_str, char):

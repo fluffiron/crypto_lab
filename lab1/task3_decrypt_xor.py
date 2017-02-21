@@ -31,8 +31,8 @@ def decrypt_by_one_char(in_str, char):
 		return ''.join([chr(int(i, 16) ^ char) for i in ar_bytes])
 	else:
 		return ""
-#date="191f1911160b0c580c101d581d0e1114583f1914191b0c111b583d1508110a1d56"		
-print("Enter hex string")
+date="191f1911160b0c580c101d581d0e1114583f1914191b0c111b583d1508110a1d56"		
+'''print("Enter hex string")
 while True:
 	date = raw_input()
 
@@ -41,7 +41,7 @@ while True:
 		break
 	except ValueError:
 		print("Try again!")
-
+'''
 res_dict={}
 for i in range(64,123):
 	res_dict[i] = decrypt_by_one_char(date,i)
