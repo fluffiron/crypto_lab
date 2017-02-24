@@ -49,7 +49,7 @@ class my_AES():
 		self.cipher = AES.new(key, AES.MODE_ECB)
 
 a=my_AES()
-
+print profile_for("f@bar.com")
 cipher_text = a.cipher.encrypt( addition_PKCS7( profile_for("f@bar.com") ) )
 #print [line[i:i+16] for i in range(0,len(line),16)]
 part_crypt = a.cipher.encrypt(addition_PKCS7("uid=10&role=admin"))

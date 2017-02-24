@@ -45,7 +45,7 @@ def brute_force():
 		if l_tmp.count(cip_AA) > 0:
 			addit_str = "A" * j
 			beginning = ( l_tmp.index(cip_AA) + 1)* 16
-			print l_tmp.index(cip_AA)
+#			print l_tmp.index(cip_AA)
 			blocks_n -= l_tmp.index(cip_AA)
 			break			
 		

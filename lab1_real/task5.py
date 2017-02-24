@@ -47,7 +47,7 @@ def brute_force():
 			ciph = a.crypt( "A" * l  )
 			for byte in range(256):
 				if len(my_str + tmp_open_str) + 1 != 16:
-					tmp_open_str = tmp_open_str[:-1]
+					tmp_open_str = tmp_open_str[:-2] + "\n"
 					break
 				if a.cipher.encrypt(my_str + tmp_open_str + chr(byte)) == ciph[16 * cnt_blocks :block_size + 16 * cnt_blocks]:
 					tmp_open_str += chr(byte)
