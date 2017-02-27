@@ -3,11 +3,8 @@ import math
 import string
 
 def is_ascii(s):
-	if len(s) == 0:
-		return False
-	forbidden = set("%`")
-	is_forbidden = bool(set(s).intersection(forbidden))
-	return all(c in string.printable for c in s) and (not is_forbidden )
+	return all( ord(c) > 128 for c in s)
+#	return all(c in string.printable for c in s)
 
 def english_detect(open_text_dict):
 	if type(open_text_dict) != dict :
@@ -17,6 +14,7 @@ def english_detect(open_text_dict):
 	open_text_dict = {key : text  for key, text in open_text_dict.items() if is_ascii(text)}
 
 	if len(open_text_dict) == 0:
+		print "There is no ascii string!"
 		return ""
 	inv_prob = {}
 	for key,text in open_text_dict.items():
@@ -28,19 +26,11 @@ def english_detect(open_text_dict):
 		inv_prob[key] = prob
 
 	min_key = min(inv_prob.iteritems(), key=operator.itemgetter(1))[0]	
-
-#	print(open_text_dict[min_key])	
-
-	return min_key
+	print "not zero"
+	return chr(min_key)
 
 def decrypt_by_one_char(in_str, char):
-	try:
-#		ar_bytes=[in_str[i:i+2] for i in range(0,len(in_str), 2)]
-		
-		return ''.join([chr(ord(i) ^ char) for i in in_lst])
-	except:
-		return ""
-
+	return ''.join([chr(ord(i) ^ char) for i in in_str])
 
 def XOR(str_in, key):
 	long_key = ""
@@ -56,31 +46,32 @@ def XOR(str_in, key):
 
 encrypted_lines_b64 = open("Lab2_breakctr3-b64.txt")
 encrypted_lines = [i.decode("base64") for i in encrypted_lines_b64]
+
 min_string_len = min( map(len, encrypted_lines) )
 
+
 encrypted_lines = [i[:min_string_len] for i in encrypted_lines]
+
+
 xor_enc_lines = []
-for i in range( min_string_len / 16 ):
+for i in range( min_string_len ):
 	tmp_xor_line = ""
 	for input_line in encrypted_lines:
-		tmp_xor_line += input_line[16*i:16*i+16]
+		tmp_xor_line += input_line[i]
 	xor_enc_lines.append(tmp_xor_line)
 
+key = ""
 
-k_len = 16
 for line in xor_enc_lines:
-	buff = [ ""  for i in range(k_len) ]
-	for i in range( len(line) ):
-		buff[ i % k_len ] += line[i]
-	print buff
-	key = ""
-	for str_sub in buff:
-		d_tmp ={}
-		for i in range(256):
-			d_tmp[i] = decrypt_by_one_char(str_sub,i)
-		key += english_detect(d_tmp)
-	
-	print(XOR(line,key))
+#	print line
+	d_tmp ={}
+	for i in range(256):
+		d_tmp[i] = decrypt_by_one_char(line,i)
+	tmp = english_detect(d_tmp)
+#	print tmp
+	key += tmp
+
+print XOR(encrypted_lines[0],key)
 
 
 
